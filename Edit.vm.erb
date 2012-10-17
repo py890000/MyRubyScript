@@ -1,0 +1,73 @@
+<% 
+	#tableCode 表的英文名称转化成 Ht_refund.camelize   HtRefund
+  table_name_con = @tableCode.camelize 
+  #    
+  url_name  =   @packageName.gsub(/([.])/, '/')  
+
+    %>
+#########################################script#####################################
+##该模板不能含有script，否则会执行两次。
+#set($js_config=["
+'homeModule' : '$homeModule',
+'urlMap':{
+'query':'$homeModule/<%=@packageName%>/eticketList.htm?action=/eorder/ETicketAction&event_submit_do_query_e_ticket_for_pagin=anything',
+'view<%=table_name_con%>':'$homeModule<%=url_name%>/<%=table_name_con.lowercase%>Info.htm',
+'check':'$homeModule/eorder/eticket/eticketCheck.htm',
+'exportData':'$homeModule/eorder/eticket/uploading.htm'
+},
+'permission':{},
+'<%=table_name_con.lowercase%>Info':'<%=@tableName%>详细信息'
+"])
+#set($js_url=["$statics/js/<%=url_name%>/<%=table_name_con.lowercase%>.js"])
+##针对页面功能的js文件URL路径
+#########################################DOM#########################################
+<div region ="center" border="false">>
+	<form id="Edit_Form" method="post">
+		$csrfToken.hiddenField	
+		<table class="form-table" border=0 width="90%">			
+			<tr><td class="title2" colspan="4"><%=@tableName%>详细信息</td></tr>
+			<%
+						k = @columns.count
+						 n = 0
+						 while n < k do
+						  i = @columns[n]
+						  temp = i.field.camelize  
+						 
+			%>
+
+			<tr>
+				<td class="lable"><%=i.comment%>：</td>
+				<td>
+					
+					<input name=" <%=temp.lowercase%> " id=" <%=temp.lowercase%>" 
+					  value="$!{<%=table_name_con.lowercase%>.<%=temp.lowercase%>}"
+						class="easyui-validatebox wid300"  validType="maxLength[50]">
+					
+				</td>
+				<%  
+								if !@columns[n+1].nil?
+								    i = @columns[n+1] 
+							 	   temp = i.field.camelize 
+				%>	
+				<td class="lable"><%=i.comment%>：</td>
+				<td>
+					
+					<input name="<%=temp.lowercase%>" id="<%=temp.lowercase%>" 
+						value="$!{<%=table_name_con.lowercase%>.<%=temp.lowercase%>}"
+						class="easyui-validatebox wid300"  validType="maxLength[50]">	
+					
+				</td>
+			<%  end	%>
+			</tr>
+			<%  n = n + 2 %>	
+			<% end %> 	
+			
+		</table>		
+		
+		<div class="form-bottom-toolbar" >
+			<a id="Submit_Button" onclick="submitRefundform('add')" class="easyui-linkbutton" iconCls="icon-save" style="float:rigth">保存</a>
+			<a onclick="self.parent.Data_Globals.closeTab({'title':self.parent.config.addProductTabTitle})"
+			href="#" class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
+		</div>
+	</form>
+</div>

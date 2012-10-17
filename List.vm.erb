@@ -1,0 +1,59 @@
+
+
+<% 
+	#tableCode 表的英文名称转化成 Ht_refund.camelize   HtRefund
+  table_name_con = @tableCode.camelize 
+  #    
+  url_name  =   @packageName.gsub(/([.])/, '/')  
+
+    %>
+
+
+#########################################script#####################################
+##该模板不能含有script，否则会执行两次。
+#set($js_config=["
+'homeModule' : '$homeModule',
+'urlMap':{
+'query':'$homeModule/<%=@packageName%>/eticketList.htm?action=/eorder/ETicketAction&event_submit_do_query_e_ticket_for_pagin=anything',
+'view<%=table_name_con%>':'$homeModule<%=url_name%>/<%=table_name_con.lowercase%>Info.htm',
+'check':'$homeModule/eorder/eticket/eticketCheck.htm',
+'exportData':'$homeModule/eorder/eticket/uploading.htm'
+},
+'permission':{},
+'<%=table_name_con.lowercase%>Info':'<%=@tableName%>详细信息'
+"])
+#set($js_url=["$statics/js/<%=url_name%>/<%=table_name_con.lowercase%>.js"])
+##针对页面功能的js文件URL路径
+#########################################DOM#########################################
+<div class="easyui-tabs" id="Data_Tabs" fit="true" border="false">
+  <div title="<%=@tableName%>" class="tab-container">
+    <div id="Query_Box" class="condition">
+      <form class="query-form" id ="query-form" >
+        <ul>         
+          <%@columns.each {   |i|    temp = i.field.camelize %>
+          <li><label for="<%= temp.lowercase %>"><%=i.comment%></label><input id="<%=temp.lowercase%>" name="<%=temp.lowercase%>" class="wid200"/></li>
+          <% } %>   
+        </ul>
+        <div class="btn-w">
+          <a id="Query_Button" class="easyui-linkbutton" iconCls="icon-search">查询</a>
+          <a id="Reset_Button" class="easyui-linkbutton" iconCls="icon-redo" href="javascript:Data_Globals.resetOrderListQuery()">重置</a>
+        </div>
+      </form>
+    </div>
+    <div class="toolbar" region="north">
+      <a id="edit_<%=table_name_con.lowercase%>" class="easyui-linkbutton" plain="true" iconCls="icon-edit" >编辑<%=@tableName%></a>
+			<a id="add_<%=table_name_con.lowercase%>" class="easyui-linkbutton" plain="true" iconCls="icon-add" >添加<%=@tableName%></a>
+			<a id="delete_<%=table_name_con.lowercase%>" class="easyui-linkbutton" plain="true" iconCls="icon-edit" >删除<%=@tableName%></a>
+      
+    </div>
+    <table id="Data_Grid" remoteSort="false" border="true" >
+      <thead>
+      <tr>    
+        <%@columns.each {   |i|    temp = i.field.camelize %>        
+          <th field="<%= temp.lowercase %>" width="100"><%=i.comment%></th>
+          <% } %>       
+      </tr>
+      </thead>
+    </table>
+  </div>
+</div>
